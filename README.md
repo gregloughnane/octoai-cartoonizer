@@ -494,7 +494,7 @@ As a sanity check, check the inference server logs to see if your model containe
 
 Repeat the same steps here but this time around we'll give you the URL to the model container you'll be launching with OctoAI. Keep all of the parameters the same. 
 * Under `Endpoint name`, enter "stable-diffusion"
-* Under Under `Container Image`, point to the following `jwfromm/tvm-stable-diffusion:latest` container, available under this [link](https://hub.docker.com/r/jwfromm/tvm-stable-diffusion/tags) - it was built using in-house optimizations that made this the fastest version of Stable Diffusion available.
+* Under Under `Container Image`, point to the following `tmoreau89octo/cartoonizer-stable-diffusion:v0.1.1` container, available under this [link](https://hub.docker.com/repository/docker/tmoreau89octo/cartoonizer-stable-diffusion/general).
 
 Perform the same steps. We've already tested this one for you, so you'll exercise it when you build the full Cartoonizer web app.
 
