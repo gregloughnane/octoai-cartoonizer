@@ -124,16 +124,17 @@ def cartoonize_image(upload, strength, seed, extra_desc):
     watermark = "assets/octoml-octopus-white.png" # watermark image
     target = "cartoonized_marked.png" # save to this file
     quality = 90 # image quality
-    
+
     # (C) DRAW WATERMARK & SAVE
     imgS = cartoonized.convert("RGBA")
     imgW = Image.open(watermark)
+    imgW = imgW.resize((100, 100)) # change the numbers to adjust the size
     imgS.paste(imgW, (0,0), imgW.convert("RGBA"))
     imgS.save(target, format="png", quality=quality)
 
     col2.image(imgS)
 
-    st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png", mime="cartoonized_marked/png")
+    # st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png", mime="cartoonized_marked/png")
 
 
 
