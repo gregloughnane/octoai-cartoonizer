@@ -133,7 +133,6 @@ def cartoonize_image(upload, strength, seed, extra_desc):
 
     col2.image(imgS)
 
-    st.markdown("\n")
     st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png", mime="cartoonized_marked/png")
 
 
