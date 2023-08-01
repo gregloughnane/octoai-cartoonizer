@@ -211,9 +211,7 @@ st.title("🤩 Cartoonizer")
 # )
 
 # my_upload = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-my_upload = st.camera_input('📸 Take a picture!')
 
-col1, col2 = st.columns(2)
 
 # if my_upload is not None:
 #     st.image(my_upload, caption="Captured image")
@@ -232,21 +230,39 @@ col1, col2 = st.columns(2)
 #     "Report any issues, bugs, unexpected behaviors [here](https://github.com/tmoreau89/cartoonize/issues)"
 # )
 
+# create a placeholder for the image
+image_placeholder = st.empty()
+
+my_upload = image_placeholder.camera_input('📸 Take a picture!')
+
+# clear the placeholder if my_upload is not None
+if my_upload is not None:
+    image_placeholder.empty()
+
+col1, col2 = st.columns(2)
+
 if my_upload is not None:
 
     seed = 0
+    strength = 4
+    extra_desc = ' '
     
-    if st.button('Generate New Variation!'):
-        seed = random.randint(0, 1024)
+    with col2:
 
-    with st.expander("Add more context to customize the output"):
-        extra_desc = st.text_input("")
+        cartoonize_image(my_upload, strength, seed, extra_desc)
+        
+        if st.button('😊 Generate New Variation!'):
+            seed = random.randint(0, 1024)
 
-    strength = st.slider(
-        ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
-        3, 10, 4)
-    
-    cartoonize_image(my_upload, strength, seed, extra_desc)
+        strength = st.slider(
+            ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
+            3, 10, 4)
+        
+        with st.expander("🖋️ Add more context to customize the output"):
+            extra_desc = st.text_input("")
+
+        
+        
         
 
 # # Display the image and the share button using streamlit components
