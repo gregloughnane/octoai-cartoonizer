@@ -213,6 +213,8 @@ st.title("🤩 Cartoonizer")
 # my_upload = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 my_upload = st.camera_input('📸 Take a picture!')
 
+col1, col2 = st.columns(2)
+
 # if my_upload is not None:
 #     st.image(my_upload, caption="Captured image")
 
@@ -234,7 +236,7 @@ if my_upload is not None:
 
     seed = 0
     
-    if st.button('Generate New Cartoon!'):
+    if st.button('Generate New Variation!'):
         seed = random.randint(0, 1024)
 
     with st.expander("Add more context to customize the output"):
@@ -245,8 +247,7 @@ if my_upload is not None:
         3, 10, 4)
     
     cartoonize_image(my_upload, strength, seed, extra_desc)
-
-
+        
 
 # # Display the image and the share button using streamlit components
 # # st.image(cartoonized, caption="Generated image")
