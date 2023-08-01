@@ -11,12 +11,11 @@ SD_ENDPOINT = "https://cartoonizer-sd-demo-cgi-4jkxk521l3v1.octoai.cloud"
 st.set_page_config(layout="wide", page_title="Cartoonizer")
 
 # Powered by OctoML displayed in top right
-st.image("assets/octoml-octopus-white.png", width=100)
 st.markdown("""
 <style>
 .powered-by {
     position: absolute;
-    top: -130px;
+    top: -10px;
     right: 0;
     float: right;
 }
@@ -135,7 +134,7 @@ def cartoonize_image(upload, strength, seed, extra_desc):
     col2.image(imgS)
 
     st.markdown("\n")
-    st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png")
+    st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png", mime="cartoonized_marked/png")
 
 
 
@@ -227,7 +226,7 @@ strength = st.slider(
     3, 10, 4)
 
 seed = 0
-if st.button('Generate Cartoon!'):
+if st.button('Generate New Cartoon!'):
     seed = random.randint(0, 1024)
 
 # st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
