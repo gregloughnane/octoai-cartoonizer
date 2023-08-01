@@ -225,9 +225,7 @@ strength = st.slider(
     ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
     3, 10, 4)
 
-seed = 0
-if st.button('Generate New Cartoon!'):
-    seed = random.randint(0, 1024)
+
 
 # st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
 
@@ -244,7 +242,12 @@ if st.button('Generate New Cartoon!'):
 # )
 
 if my_upload is not None:
+
+    seed = 0
     cartoonize_image(my_upload, strength, seed, extra_desc)
+    
+    if st.button('Generate New Cartoon!'):
+        seed = random.randint(0, 1024)
 
 # # Display the image and the share button using streamlit components
 # # st.image(cartoonized, caption="Generated image")
