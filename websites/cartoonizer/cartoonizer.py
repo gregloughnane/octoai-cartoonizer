@@ -5,10 +5,28 @@ from base64 import b64decode, b64encode
 import requests
 import random
 
-
-
 CLIP_ENDPOINT = "https://cartoonizer-clip-test-4jkxk521l3v1.octoai.cloud"
 SD_ENDPOINT = "https://cartoonizer-sd-demo-cgi-4jkxk521l3v1.octoai.cloud"
+
+st.set_page_config(layout="wide", page_title="Cartoonizer")
+
+# Powered by OctoML displayed in top right
+st.image("assets/octoml-octopus-white.png", width=100)
+st.markdown("""
+<style>
+.powered-by {
+    position: absolute;
+    top: -130px;
+    right: 0;
+    float: right;
+}
+.powered-by span {
+    padding-right: 5;
+</style>
+<div class="powered-by">
+<span>Powered by </span> <a href="https://octoai.cloud/"><img src="https://i.ibb.co/T1X1CHG/octoml-octo-ai-logo-vertical-container-white.png" alt="octoml-octo-ai-logo-vertical-container-white" border="0" width="200"></a>
+</div>
+""", unsafe_allow_html=True)
 
 # PIL helper
 def crop_center(pil_img, crop_width, crop_height):
@@ -101,61 +119,135 @@ def cartoonize_image(upload, strength, seed, extra_desc):
     cartoonized = Image.open(BytesIO(img_bytes), formats=("png",))
 
     col2.write("Transformed Image :star2:")
-    col2.image(cartoonized)
+   
+
+    # (B) SETTINGS
+    watermark = "assets/octoml-octopus-white.png" # watermark image
+    target = "cartoonized_marked.png" # save to this file
+    quality = 90 # image quality
+    
+    # (C) DRAW WATERMARK & SAVE
+    imgS = cartoonized.convert("RGBA")
+    imgW = Image.open(watermark)
+    imgS.paste(imgW, (0,0), imgW.convert("RGBA"))
+    imgS.save(target, format="png", quality=quality)
+
+    col2.image(imgS)
+
     st.markdown("\n")
-    st.download_button("Download transformed image", convert_image(cartoonized), "cartoonized.png", "cartoonized/png")
+    st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png")
 
-st.set_page_config(layout="wide", page_title="Cartoonizer")
 
-st.write("## Cartoonizer - Powered by OctoAI")
 
-st.markdown(
-    "The fastest version of Stable Diffusion in the world is now available on OctoAI, where devs run, tune, and scale generative AI models. [Try it for free here.](http://octoml.ai/)"
-)
 
-st.markdown(
-    "### Upload a photo and turn yourself into a cartoon character!"
-)
+    # # Create a folder named 'photos' if it does not exist
+    # if not os.path.exists('photos'):
+    #     os.makedirs('photos')
+    # # Save the image to the folder with a unique name
+    # img_name = 'image_' + str(time.time()) + '.png'
+    # img_path = os.path.join('photos', img_name)
+    # img.save(img_path)
 
-st.markdown(
-    " :camera_with_flash: Tip #1: works best on a square image."
-)
-st.markdown(
-    " :blush: Tip #2: works best on close ups (e.g. portraits), rather than full body or group photos."
-)
-st.markdown(
-    " :woman-getting-haircut: Tip #3: for best results, avoid cropping heads/faces."
-)
 
-my_upload = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-# my_upload = st.camera_input("Take a picture")
+
+    # # Create another button to share the image via Airdrop
+
+    # # Create the html code for the share button
+    # html = f"""
+    # <div class="share-button">
+    # <a href="https://www.facebook.com/sharer/sharer.php?u={cartoonized}" target="_blank">
+    #     <img src="https://www.webdesign.org/img_articles/22180/facebook.png" alt="Facebook" />
+    # </a>
+    # <a href="https://twitter.com/intent/tweet?url={cartoonized}" target="_blank">
+    #     <img src="https://www.webdesign.org/img_articles/22180/twitter.png" alt="Twitter" />
+    # </a>
+    # </div>
+    # """
+
+    # # Add some css style to the share button
+    # css = """
+    # <style>
+    # .share-button {
+    # display: flex;
+    # align-items: center;
+    # justify-content: center;
+    # }
+    # .share-button a {
+    # margin: 10px;
+    # }
+    # .share-button img {
+    # width: 50px;
+    # height: 50px;
+    # }
+    # </style>
+    # """
+
+    # # Display the image and the share button using streamlit components
+    # st.markdown(css, unsafe_allow_html=True)
+    # st.markdown(html, unsafe_allow_html=True)
+
+
+
+
+# st.write("## Cartoonizer - Powered by OctoAI")
+
+# st.markdown(
+#     "The fastest version of Stable Diffusion in the world is now available on OctoAI, where devs run, tune, and scale generative AI models. [Try it for free here.](http://octoml.ai/)"
+# )
+
+st.title("🤩 Cartoonizer")
+
+# st.markdown(
+#     "### Upload a photo and turn yourself into a cartoon character!"
+# )
+
+# st.markdown(
+#     " :camera_with_flash: Tip #1: works best on a square image."
+# )
+# st.markdown(
+#     " :blush: Tip #2: works best on close ups (e.g. portraits), rather than full body or group photos."
+# )
+# st.markdown(
+#     " :woman-getting-haircut: Tip #3: for best results, avoid cropping heads/faces."
+# )
+
+# my_upload = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+my_upload = st.camera_input('📸 Take a picture!')
+
+# if my_upload is not None:
+#     st.image(my_upload, caption="Captured image")
 
 col1, col2 = st.columns(2)
 
-extra_desc = st.text_input("Add more context to customize the output")
+with st.expander("Add more context to customize the output"):
+    extra_desc = st.text_input("")
 
 strength = st.slider(
     ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
-    3, 10, 5)
+    3, 10, 4)
 
 seed = 0
-if st.button('Regenerate'):
+if st.button('Generate Cartoon!'):
     seed = random.randint(0, 1024)
 
-st.sidebar.image("octoml-octo-ai-logo-color.png")
-st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
+# st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
 
-st.sidebar.markdown(
-    ":warning: **Disclaimer** :warning:: Cartoonizer is built on the foundation of [CLIP Interrogator](https://huggingface.co/spaces/pharma/CLIP-Interrogator) and [Stable Diffusion 1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5), and is therefore likely to carry forward the potential dangers inherent in these base models. ***It's capable of generating unintended, unsuitable, offensive, and/or incorrect outputs. We therefore strongly recommend exercising caution and conducting comprehensive assessments before deploying this model into any practical applications.***"
-)
+# st.sidebar.markdown(
+#     ":warning: **Disclaimer** :warning:: Cartoonizer is built on the foundation of [CLIP Interrogator](https://huggingface.co/spaces/pharma/CLIP-Interrogator) and [Stable Diffusion 1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5), and is therefore likely to carry forward the potential dangers inherent in these base models. ***It's capable of generating unintended, unsuitable, offensive, and/or incorrect outputs. We therefore strongly recommend exercising caution and conducting comprehensive assessments before deploying this model into any practical applications.***"
+# )
 
-st.sidebar.markdown(
-    "By releasing this model, we acknowledge the possibility of it being misused. However, we believe that by making such models publicly available, we can encourage the commercial and research communities to delve into the potential risks of generative AI and subsequently, devise improved strategies to lessen these risks in upcoming models. If you are researcher and would like to study this subject further, contact us and we’d love to work with you!"
-)
+# st.sidebar.markdown(
+#     "By releasing this model, we acknowledge the possibility of it being misused. However, we believe that by making such models publicly available, we can encourage the commercial and research communities to delve into the potential risks of generative AI and subsequently, devise improved strategies to lessen these risks in upcoming models. If you are researcher and would like to study this subject further, contact us and we’d love to work with you!"
+# )
 
-st.sidebar.markdown(
-    "Report any issues, bugs, unexpected behaviors [here](https://github.com/tmoreau89/cartoonize/issues)"
-)
+# st.sidebar.markdown(
+#     "Report any issues, bugs, unexpected behaviors [here](https://github.com/tmoreau89/cartoonize/issues)"
+# )
 
 if my_upload is not None:
     cartoonize_image(my_upload, strength, seed, extra_desc)
+
+# # Display the image and the share button using streamlit components
+# # st.image(cartoonized, caption="Generated image")
+# st.markdown(css, unsafe_allow_html=True)
+# st.markdown(html, unsafe_allow_html=True)
