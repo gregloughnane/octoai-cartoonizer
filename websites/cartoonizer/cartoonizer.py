@@ -230,42 +230,41 @@ st.title("🤩 Cartoonizer")
 #     "Report any issues, bugs, unexpected behaviors [here](https://github.com/tmoreau89/cartoonize/issues)"
 # )
 
+# initialize the session state variables
+if "seed" not in st.session_state:
+    st.session_state.seed = 0
+if "strength" not in st.session_state:
+    st.session_state.strength = 4
+if "extra_desc" not in st.session_state:
+    st.session_state.extra_desc = ""
+
 # create a placeholder for the image
 image_placeholder = st.empty()
 
 my_upload = image_placeholder.camera_input('📸 Take a picture!')
 
-# clear the placeholder if my_upload is not None
+# update the session state variables with the user input
 if my_upload is not None:
     image_placeholder.empty()
+    st.session_state.my_upload = my_upload
 
 col1, col2 = st.columns(2)
 
 if my_upload is not None:
 
-    seed = 0
-    strength = 4
-    extra_desc = ' '
-    
     with col2:
 
-        cartoonize_image(my_upload, strength, seed, extra_desc)
+        cartoonize_image(st.session_state.my_upload, st.session_state.strength, st.session_state.seed, st.session_state.extra_desc)
         
         if st.button('😊 Generate New Variation!'):
-            seed = random.randint(0, 1024)
+            # update the seed value with a random number
+            st.session_state.seed = random.randint(0, 1024)
 
-        strength = st.slider(
+        # update the strength value with the slider input
+        st.session_state.strength = st.slider(
             ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
             3, 10, 4)
         
         with st.expander("🖋️ Add more context to customize the output"):
-            extra_desc = st.text_input("")
-
-        
-        
-        
-
-# # Display the image and the share button using streamlit components
-# # st.image(cartoonized, caption="Generated image")
-# st.markdown(css, unsafe_allow_html=True)
-# st.markdown(html, unsafe_allow_html=True)
+            # update the extra_desc value with the text input
+            st.session_state.extra_desc = st.text_input("")
