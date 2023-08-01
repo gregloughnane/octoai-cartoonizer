@@ -216,17 +216,6 @@ my_upload = st.camera_input('📸 Take a picture!')
 # if my_upload is not None:
 #     st.image(my_upload, caption="Captured image")
 
-col1, col2 = st.columns(2)
-
-with st.expander("Add more context to customize the output"):
-    extra_desc = st.text_input("")
-
-strength = st.slider(
-    ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
-    3, 10, 4)
-
-
-
 # st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
 
 # st.sidebar.markdown(
@@ -244,10 +233,20 @@ strength = st.slider(
 if my_upload is not None:
 
     seed = 0
-    cartoonize_image(my_upload, strength, seed, extra_desc)
     
     if st.button('Generate New Cartoon!'):
         seed = random.randint(0, 1024)
+
+    with st.expander("Add more context to customize the output"):
+        extra_desc = st.text_input("")
+
+    strength = st.slider(
+        ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
+        3, 10, 4)
+    
+    cartoonize_image(my_upload, strength, seed, extra_desc)
+
+
 
 # # Display the image and the share button using streamlit components
 # # st.image(cartoonized, caption="Generated image")
