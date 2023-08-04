@@ -134,101 +134,7 @@ def cartoonize_image(upload, strength, seed, extra_desc):
 
     col2.image(imgS)
 
-    # st.download_button(label="Download cartoon", data=convert_image(imgS), file_name="cartoonized_marked.png", mime="cartoonized_marked/png")
-
-
-
-
-    # # Create a folder named 'photos' if it does not exist
-    # if not os.path.exists('photos'):
-    #     os.makedirs('photos')
-    # # Save the image to the folder with a unique name
-    # img_name = 'image_' + str(time.time()) + '.png'
-    # img_path = os.path.join('photos', img_name)
-    # img.save(img_path)
-
-
-
-    # # Create another button to share the image via Airdrop
-
-    # # Create the html code for the share button
-    # html = f"""
-    # <div class="share-button">
-    # <a href="https://www.facebook.com/sharer/sharer.php?u={cartoonized}" target="_blank">
-    #     <img src="https://www.webdesign.org/img_articles/22180/facebook.png" alt="Facebook" />
-    # </a>
-    # <a href="https://twitter.com/intent/tweet?url={cartoonized}" target="_blank">
-    #     <img src="https://www.webdesign.org/img_articles/22180/twitter.png" alt="Twitter" />
-    # </a>
-    # </div>
-    # """
-
-    # # Add some css style to the share button
-    # css = """
-    # <style>
-    # .share-button {
-    # display: flex;
-    # align-items: center;
-    # justify-content: center;
-    # }
-    # .share-button a {
-    # margin: 10px;
-    # }
-    # .share-button img {
-    # width: 50px;
-    # height: 50px;
-    # }
-    # </style>
-    # """
-
-    # # Display the image and the share button using streamlit components
-    # st.markdown(css, unsafe_allow_html=True)
-    # st.markdown(html, unsafe_allow_html=True)
-
-
-
-
-# st.write("## Cartoonizer - Powered by OctoAI")
-
-# st.markdown(
-#     "The fastest version of Stable Diffusion in the world is now available on OctoAI, where devs run, tune, and scale generative AI models. [Try it for free here.](http://octoml.ai/)"
-# )
-
 st.title("🤩 Cartoonizer")
-
-# st.markdown(
-#     "### Upload a photo and turn yourself into a cartoon character!"
-# )
-
-# st.markdown(
-#     " :camera_with_flash: Tip #1: works best on a square image."
-# )
-# st.markdown(
-#     " :blush: Tip #2: works best on close ups (e.g. portraits), rather than full body or group photos."
-# )
-# st.markdown(
-#     " :woman-getting-haircut: Tip #3: for best results, avoid cropping heads/faces."
-# )
-
-# my_upload = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-
-
-# if my_upload is not None:
-#     st.image(my_upload, caption="Captured image")
-
-# st.sidebar.markdown("The image to image generation is achieved via the [following checkpoint](https://civitai.com/models/75650/disney-pixar-cartoon-type-b) on CivitAI.")
-
-# st.sidebar.markdown(
-#     ":warning: **Disclaimer** :warning:: Cartoonizer is built on the foundation of [CLIP Interrogator](https://huggingface.co/spaces/pharma/CLIP-Interrogator) and [Stable Diffusion 1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5), and is therefore likely to carry forward the potential dangers inherent in these base models. ***It's capable of generating unintended, unsuitable, offensive, and/or incorrect outputs. We therefore strongly recommend exercising caution and conducting comprehensive assessments before deploying this model into any practical applications.***"
-# )
-
-# st.sidebar.markdown(
-#     "By releasing this model, we acknowledge the possibility of it being misused. However, we believe that by making such models publicly available, we can encourage the commercial and research communities to delve into the potential risks of generative AI and subsequently, devise improved strategies to lessen these risks in upcoming models. If you are researcher and would like to study this subject further, contact us and we’d love to work with you!"
-# )
-
-# st.sidebar.markdown(
-#     "Report any issues, bugs, unexpected behaviors [here](https://github.com/tmoreau89/cartoonize/issues)"
-# )
 
 # initialize the session state variables
 if "seed" not in st.session_state:
@@ -241,6 +147,7 @@ if "extra_desc" not in st.session_state:
 # create a placeholder for the image
 image_placeholder = st.empty()
 
+# take image
 my_upload = image_placeholder.camera_input('📸 Take a picture!')
 
 # update the session state variables with the user input
@@ -248,23 +155,28 @@ if my_upload is not None:
     image_placeholder.empty()
     st.session_state.my_upload = my_upload
 
+# break the display into two columns
 col1, col2 = st.columns(2)
 
+# once image is taken, pop up cropped image and cartoonized image, with ability to modify
 if my_upload is not None:
 
     with col2:
 
+        # show cartoonized image
         cartoonize_image(st.session_state.my_upload, st.session_state.strength, st.session_state.seed, st.session_state.extra_desc)
         
+        # button - generate new variation
         if st.button('😊 Generate New Variation!'):
             # update the seed value with a random number
             st.session_state.seed = random.randint(0, 1024)
 
-        # update the strength value with the slider input
+        # slider - increase creativity of image
         st.session_state.strength = st.slider(
             ":brain: Imagination Slider (lower: closer to original, higher: more imaginative result)",
             3, 10, 4)
         
+        # optional text box for Stable Diffusion inputs, hidden until expanded
         with st.expander("🖋️ Add more context to customize the output"):
             # update the extra_desc value with the text input
             st.session_state.extra_desc = st.text_input("")
