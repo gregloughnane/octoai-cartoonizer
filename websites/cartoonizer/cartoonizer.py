@@ -185,9 +185,5 @@ if my_upload is not None:
         with st.expander("🖋️ Add more context to customize the output"):
             # update the extra_desc value with the text input
             st.session_state.extra_desc = st.text_input("")
-    
-        # create a button widget that calls the rerun function when clicked
-        if st.button("🔄 Restart"):
-            webbrowser.open("https://cartoonizer-octo-ai4.streamlit.app/")
 
 
