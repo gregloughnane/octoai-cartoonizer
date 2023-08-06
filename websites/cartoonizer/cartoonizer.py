@@ -1,9 +1,10 @@
 import streamlit as st
-from PIL import Image, ExifTags
+from PIL import Image, ImageOps, ExifTags
 from io import BytesIO
 from base64 import b64decode, b64encode
 import requests
 import random
+import webbrowser
 
 CLIP_ENDPOINT = "https://cartoonizer-clip-test-4jkxk521l3v1.octoai.cloud"
 SD_ENDPOINT = "https://cartoonizer-sd-demo-cgi-4jkxk521l3v1.octoai.cloud"
@@ -119,20 +120,24 @@ def cartoonize_image(upload, strength, seed, extra_desc):
 
     col2.write("Transformed Image :star2:")
    
+    # open octoml logo image for watermark
+    watermark = Image.open("assets/octoml-octopus-white.png")
+    watermark = watermark.resize((100, 100)) # change the numbers to adjust the size
 
-    # (B) SETTINGS
-    watermark = "assets/octoml-octopus-white.png" # watermark image
-    target = "cartoonized_marked.png" # save to this file
-    quality = 90 # image quality
+    A = watermark.getchannel('A')
 
-    # (C) DRAW WATERMARK & SAVE
-    imgS = cartoonized.convert("RGBA")
-    imgW = Image.open(watermark)
-    imgW = imgW.resize((100, 100)) # change the numbers to adjust the size
-    imgS.paste(imgW, (0,0), imgW.convert("RGBA"))
-    imgS.save(target, format="png", quality=quality)
+    # Make all opaque pixels into semi-opaque
+    newA = A.point(lambda i: 35 if i>0 else 0)
 
-    col2.image(imgS)
+    # Put new alpha channel back into original image and save
+    watermark.putalpha(newA)
+
+    # add watermark to image
+    watermarked_image = cartoonized.convert("RGBA")
+    watermarked_image.paste(watermark, (0,0), watermark)
+    watermarked_image.save("cartoonized_marked.png", quality=90)
+
+    col2.image(watermarked_image)
 
 st.title("🤩 Cartoonizer")
 
@@ -180,3 +185,9 @@ if my_upload is not None:
         with st.expander("🖋️ Add more context to customize the output"):
             # update the extra_desc value with the text input
             st.session_state.extra_desc = st.text_input("")
+    
+        # create a button widget that calls the rerun function when clicked
+        if st.button("🔄 Restart"):
+            webbrowser.open("https://cartoonizer-octo-ai4.streamlit.app/")
+
+
